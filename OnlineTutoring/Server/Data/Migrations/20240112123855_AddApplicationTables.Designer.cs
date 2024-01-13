@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OnlineTutoring.Server.Data;
 
@@ -11,9 +12,11 @@ using OnlineTutoring.Server.Data;
 namespace OnlineTutoring.Server.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240112123855_AddApplicationTables")]
+    partial class AddApplicationTables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -188,20 +191,6 @@ namespace OnlineTutoring.Server.Data.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "ad2bcf0c-20db-474f-8407-5a6b159518ba",
-                            Name = "Administrator",
-                            NormalizedName = "ADMINISTRATOR"
-                        },
-                        new
-                        {
-                            Id = "bd2bcf0c-20db-474f-8407-5a6b159518bb",
-                            Name = "User",
-                            NormalizedName = "USER"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -291,13 +280,6 @@ namespace OnlineTutoring.Server.Data.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetUserRoles", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            UserId = "3781efa7-66dc-47f0-860f-e506d04102e4",
-                            RoleId = "ad2bcf0c-20db-474f-8407-5a6b159518ba"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
@@ -390,26 +372,6 @@ namespace OnlineTutoring.Server.Data.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "3781efa7-66dc-47f0-860f-e506d04102e4",
-                            AccessFailedCount = 0,
-                            ConcurrencyStamp = "f48d9c77-e7f7-4841-85c2-dedaf5028df9",
-                            Email = "admin@localhost.com",
-                            EmailConfirmed = false,
-                            FirstName = "Admin",
-                            LastName = "User",
-                            LockoutEnabled = false,
-                            NormalizedEmail = "ADMIN@LOCALHOST.COM",
-                            NormalizedUserName = "ADMIN@LOCALHOST.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEG1ikp9IAP1YeUZaNYdljHQaClbJJhqTaVFlxRX/aIzP0TyiCXHUAtO9RORG53oTOg==",
-                            PhoneNumberConfirmed = false,
-                            SecurityStamp = "52eefd9d-ca29-401e-b6f5-fa1c797a7fd8",
-                            TwoFactorEnabled = false,
-                            UserName = "admin@localhost.com"
-                        });
                 });
 
             modelBuilder.Entity("OnlineTutoring.Shared.Domain.Appointment", b =>
@@ -659,28 +621,6 @@ namespace OnlineTutoring.Server.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Posters");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CoursePrice = 150.99000000000001,
-                            CreatedBy = "System",
-                            DateCreated = new DateTime(2024, 1, 13, 14, 51, 17, 792, DateTimeKind.Local).AddTicks(1528),
-                            DateUpdated = new DateTime(2024, 1, 13, 14, 51, 17, 792, DateTimeKind.Local).AddTicks(1541),
-                            Description = "Math for Meth-Heads",
-                            UpdatedBy = "System"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            CoursePrice = 299.99000000000001,
-                            CreatedBy = "System",
-                            DateCreated = new DateTime(2024, 1, 13, 14, 51, 17, 792, DateTimeKind.Local).AddTicks(1544),
-                            DateUpdated = new DateTime(2024, 1, 13, 14, 51, 17, 792, DateTimeKind.Local).AddTicks(1544),
-                            Description = "Science",
-                            UpdatedBy = "System"
-                        });
                 });
 
             modelBuilder.Entity("OnlineTutoring.Shared.Domain.Qualification", b =>
@@ -777,34 +717,6 @@ namespace OnlineTutoring.Server.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Students");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CreatedBy = "System",
-                            DateCreated = new DateTime(2024, 1, 13, 14, 51, 17, 715, DateTimeKind.Local).AddTicks(4500),
-                            DateUpdated = new DateTime(2024, 1, 13, 14, 51, 17, 715, DateTimeKind.Local).AddTicks(4501),
-                            ParentsContact = 456,
-                            StudentAge = 11,
-                            StudentContact = 123,
-                            StudentGender = "Male",
-                            StudentName = "John",
-                            UpdatedBy = "System"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            CreatedBy = "System",
-                            DateCreated = new DateTime(2024, 1, 13, 14, 51, 17, 715, DateTimeKind.Local).AddTicks(4503),
-                            DateUpdated = new DateTime(2024, 1, 13, 14, 51, 17, 715, DateTimeKind.Local).AddTicks(4504),
-                            ParentsContact = 456,
-                            StudentAge = 18,
-                            StudentContact = 123,
-                            StudentGender = "Female",
-                            StudentName = "Aliyah",
-                            UpdatedBy = "System"
-                        });
                 });
 
             modelBuilder.Entity("OnlineTutoring.Shared.Domain.Subject", b =>
@@ -836,28 +748,6 @@ namespace OnlineTutoring.Server.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Subjects");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CreatedBy = "System",
-                            DateCreated = new DateTime(2024, 1, 13, 14, 51, 17, 715, DateTimeKind.Local).AddTicks(4765),
-                            DateUpdated = new DateTime(2024, 1, 13, 14, 51, 17, 715, DateTimeKind.Local).AddTicks(4766),
-                            SubjectLevel = "Secondary 1",
-                            SubjectType = "English",
-                            UpdatedBy = "System"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            CreatedBy = "System",
-                            DateCreated = new DateTime(2024, 1, 13, 14, 51, 17, 715, DateTimeKind.Local).AddTicks(4768),
-                            DateUpdated = new DateTime(2024, 1, 13, 14, 51, 17, 715, DateTimeKind.Local).AddTicks(4769),
-                            SubjectLevel = "Secondary 4",
-                            SubjectType = "Math",
-                            UpdatedBy = "System"
-                        });
                 });
 
             modelBuilder.Entity("OnlineTutoring.Shared.Domain.Tutor", b =>
@@ -892,30 +782,6 @@ namespace OnlineTutoring.Server.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Tutors");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CreatedBy = "System",
-                            DateCreated = new DateTime(2024, 1, 13, 14, 51, 17, 715, DateTimeKind.Local).AddTicks(4046),
-                            DateUpdated = new DateTime(2024, 1, 13, 14, 51, 17, 715, DateTimeKind.Local).AddTicks(4063),
-                            TutorAge = 33,
-                            TutorGender = "Male",
-                            TutorName = "Walid",
-                            UpdatedBy = "System"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            CreatedBy = "System",
-                            DateCreated = new DateTime(2024, 1, 13, 14, 51, 17, 715, DateTimeKind.Local).AddTicks(4065),
-                            DateUpdated = new DateTime(2024, 1, 13, 14, 51, 17, 715, DateTimeKind.Local).AddTicks(4066),
-                            TutorAge = 33,
-                            TutorGender = "Female",
-                            TutorName = "Chantel",
-                            UpdatedBy = "System"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
