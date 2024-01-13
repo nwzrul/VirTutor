@@ -4,6 +4,9 @@ using Microsoft.EntityFrameworkCore;
 using OnlineTutoring.Server.Data;
 using OnlineTutoring.Server.Models;
 using Microsoft.AspNetCore.Identity;
+using OnlineTutoring.Server.IRepository;
+using OnlineTutoring.Server.Repository;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,6 +27,8 @@ builder.Services.AddAuthentication()
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
+
+builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
 
 var app = builder.Build();
 
