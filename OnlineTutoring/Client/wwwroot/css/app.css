@@ -1,8 +1,9 @@
 @import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
 
-html, body {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+/*html, body {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
 }
+
 
 h1:focus {
     outline: none;
@@ -98,4 +99,71 @@ a, .btn-link {
 
     .loading-progress-text:after {
         content: var(--blazor-load-percentage-text, "Loading");
+    }*/
+
+/* Update Font */
+body {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+}
+
+/* Adjust Link Colors */
+a, .btn-link {
+    color: #800080; /* Purple color */
+}
+
+/* Customize Primary Button */
+.btn-primary {
+    color: #fff;
+    background-color: #800080; /* Purple color */
+    border-color: #6a006a; /* Darker purple for border */
+}
+
+/* Improve Focus Styles */
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #800080; /* Purple color */
+}
+
+/* Adjust Padding for Content */
+.content {
+    padding-top: 2rem; /* Increase top padding */
+    padding-bottom: 2rem; /* Increase bottom padding */
+}
+
+/* Customize Validation Styles */
+.valid.modified:not([type=checkbox]) {
+    outline: 1px solid #663366; /* Dark purple for valid input outline */
+}
+
+.invalid {
+    outline: 1px solid #ff0000; /* Red for invalid input outline */
+}
+
+.validation-message {
+    color: #ff0000; /* Red for validation message */
+}
+
+/* Styling for Error UI */
+#blazor-error-ui {
+    background: #800080; /* Purple color */
+    box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.2);
+}
+
+    #blazor-error-ui::after {
+        content: "An error has occurred.";
+        color: #ffffff; /* White color for error text */
     }
+
+/* Customize Loading Progress */
+.loading-progress {
+    width: 6rem; /* Adjust loading progress width */
+    height: 6rem; /* Adjust loading progress height */
+}
+
+    .loading-progress circle:last-child {
+        stroke: #800080; /* Purple color for loading progress */
+    }
+
+.loading-progress-text {
+    font-weight: bold;
+    color: #800080; /* Purple color for loading progress text */
+}

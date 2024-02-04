@@ -1,9 +1,71 @@
-﻿@page "/"
+﻿@* @page "/"
 
-<PageTitle>Index</PageTitle>
+<PageTitle>Welcome to VirTutor</PageTitle>
 
-<h1>Welcome to VirTutor</h1>
+<div class="container">
+    <div class="jumbotron mt-5">
+        <h1 class="display-4">Unlock Your Potential with VirTutor!</h1>
+        <p class="lead">Illuminate your mind through personalized online tutoring sessions.</p>
+        <hr class="my-4">
+        <p>At VirTutor, we are dedicated to providing high-quality online tutoring to help you succeed academically. Our experienced tutors are here to guide you through your learning journey and unlock your full potential.</p>
+        <p>Explore a world of knowledge with VirTutor and achieve your academic goals.</p>
 
-Unlock Your Potential & Illuminate Your Mind with VirTutor! Please give us A*** 
+        <!-- Navigation Links to Other Pages -->
+        <div class="mt-4">
+            <a class="btn btn-primary mr-2" href="/students">Explore Subjects Offered in VirTutor!</a>
+            <a class="btn btn-secondary" href="/tutors">Meet Our Tutors</a>
+        </div>
+    </div>
+</div>
+ *@
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+ @page "/"
+
+<style>
+    /* Define custom styles for fonts */
+    body {
+        font-family: 'Helvetica Neue', Arial, sans-serif;
+    }
+
+    h1 {
+        font-size: 2.5rem; /* Adjust the font size for h1 */
+        font-weight: bold; /* Make h1 bold */
+        color: #333; /* Change the color of h1 */
+    }
+
+    p {
+        font-size: 1.2rem; /* Adjust the font size for paragraphs */
+        line-height: 1.6; /* Adjust the line height for better readability */
+        color: #555; /* Change the color of paragraphs */
+    }
+
+    .lead {
+        font-size: 1.5rem; /* Adjust the font size for lead class */
+        font-weight: normal; /* Remove bold for lead class */
+        color: #777; /* Change the color of lead class */
+    }
+
+    /* Define custom styles for navigation links */
+    .btn-primary,
+    .btn-secondary {
+        font-size: 1.2rem; /* Adjust the font size for buttons */
+    }
+</style>
+
+<PageTitle>Welcome to VirTutor</PageTitle>
+
+<div class="container">
+    <div class="jumbotron mt-5">
+        <h1 class="display-4">Unlock Your Potential with VirTutor!</h1>
+        <p class="lead">Illuminate your mind through personalized online tutoring sessions.</p>
+        <hr class="my-4">
+        <p>At VirTutor, we are dedicated to providing high-quality online tutoring to help you succeed academically. Our experienced tutors are here to guide you through your learning journey and unlock your full potential.</p>
+        <p>Explore a world of knowledge with VirTutor and achieve your academic goals.</p>
+
+        <!-- Navigation Links to Other Pages -->
+        <div class="mt-4">
+            <a class="btn btn-primary mr-2" href="/students">Explore Subjects offered in VirTutor!</a>
+            <a class="btn btn-secondary" href="/tutors">Meet Our established and esteemed Tutors!</a>
+        </div>
+    </div>
+</div>

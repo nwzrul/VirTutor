@@ -28,7 +28,7 @@ namespace OnlineTutoring.Server.Repository
         private IGenericRepository<Poster> _posters;
         private IGenericRepository<Qualification> _qualifications;
         private IGenericRepository<Review> _reviews;
-
+        private IGenericRepository<Gender> _genders;
 
         private UserManager<ApplicationUser> _userManager;
 
@@ -62,6 +62,8 @@ namespace OnlineTutoring.Server.Repository
             => _qualifications ??= new GenericRepository<Qualification>(_context);
         public IGenericRepository<Review> Reviews
             => _reviews ??= new GenericRepository<Review>(_context);
+        public IGenericRepository<Gender> Genders
+            => _genders ??= new GenericRepository<Gender>(_context);
 
         public void Dispose()
         {

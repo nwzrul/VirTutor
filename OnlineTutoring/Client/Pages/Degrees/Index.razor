@@ -1,0 +1,139 @@
+﻿@page "/degrees/"
+@inject HttpClient _client
+@inject IJSRuntime js
+@attribute [Authorize]
+@inject HttpInterceptorService _interceptor
+@implements IDisposable
+
+<style>
+    /* Add the suggested CSS styles here */
+    body {
+        background-color: #f0e8f9; /* Light purple background */
+        color: #000000; /* Dark text color */
+        font-family: 'Arial', sans-serif; /* Use a suitable font */
+    }
+
+    h3 {
+        color: #6b5296; /* Purple heading color */
+    }
+
+    .btn {
+        background-color: #8752ad; /* Purple button color */
+        color: #ffffff; /* White text for buttons */
+    }
+
+    img {
+        border-radius: 8px; /* Rounded corners for images */
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+
+    th, td {
+        padding: 12px;
+        border: 1px solid #ddd;
+    }
+
+    th {
+        background-color: #8752ad; /* Purple header background */
+        color: #000000;
+    }
+
+    tr:nth-child(even) {
+        background-color: #f9f9f9; /* Zebra striping */
+    }
+
+    a {
+        color: #8752ad; /* Purple link color */
+    }
+
+        a:hover {
+            text-decoration: underline; /* Underline on hover */
+        }
+
+    td a {
+        color: #1e7fd0; /* Blue color for qualification links */
+    }
+</style>
+
+<h3 class="card-title">Degrees</h3>
+<a href="/degrees/register" class="btn btn-secondary">
+    <span class="oi oi-plus"></span>
+    Register a Degree
+</a>
+<br />
+<br />
+@if (Degrees == null)
+{
+    <div class="alert alert-info">Loading degrees...</div>
+}
+else
+{
+    <table class="table table-responsive" id="degreesTable">
+        <thead>
+            <tr>
+                @* <th>Image of Degree</th> *@
+                <th>Degree Name</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var degree in Degrees)
+            {
+                <tr>
+                    @* <td><img src="@degree.StudentImg" alt="" style="width: 200px; height: 150px;" /></td> *@
+                    <td>@degree.DegreeName</td>
+                    <td>
+                        <a href="/degrees/view/@degree.Id" class="btn btn-primary">
+                            <span class="oi oi-book"></span>
+                        </a>
+                        <a href="/degrees/edit/@degree.Id" class="btn btn-warning">
+                            <span class="oi oi-pencil"></span>
+                        </a>
+                        <button class="btn btn-danger" @onclick="@(()=>Delete(degree.Id))">
+                            <span class="oi oi-delete"></span>
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<br />
+
+@code {
+    private List<Degree>? Degrees;
+
+    protected async override Task OnInitializedAsync()
+    {
+        _interceptor.MonitorEvent();
+        Degrees = await _client.GetFromJsonAsync<List<Degree>>($"{Endpoints.DegreesEndpoint}");
+    }
+
+    async Task Delete(int degreeID)
+    {
+        if (Degrees != null)
+        {
+            var degree = Degrees.First(q => q.Id == degreeID);
+            var confirm = await js.InvokeAsync<bool>("confirm", $"Do you want to delete {degree.Id}?");
+            if (confirm)
+            {
+                await _client.DeleteAsync($"{Endpoints.DegreesEndpoint}/{degreeID}");
+                await OnInitializedAsync();
+            }
+        }
+    }
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+        await js.InvokeVoidAsync("AddDataTable", "#degreesTable");
+    }
+
+    public void Dispose()
+    {
+        js.InvokeVoidAsync("DataTablesDispose", "#degreesTable");
+    }
+}

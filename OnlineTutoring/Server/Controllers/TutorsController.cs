@@ -34,7 +34,7 @@ namespace OnlineTutoring.Server.Controllers
             //{
             //return NotFound();
             //}
-            var tutors = await _unitOfWork.Tutors.GetAll();
+            var tutors = await _unitOfWork.Tutors.GetAll(includes: q => q.Include(x => x.Diploma).Include(x => x.Degree));
             return Ok(tutors);
             //return await _context.Makes.ToListAsync();
         }

@@ -1,0 +1,248 @@
+﻿@* @page "/tutors/"
+@inject HttpClient _client
+@inject IJSRuntime js
+@attribute [Authorize]
+@inject HttpInterceptorService _interceptor
+@implements IDisposable
+
+<h3 class="card-title">Tutor Register</h3>
+<a href="/tutors/register" class="btn btn-secondary">
+    <span class="oi oi-plus"></span>
+    Register new Tutor
+</a>
+<br />
+<br />
+@if (Tutors == null)
+{
+    <div class="alert alert-info">Loading tutors...</div>
+}
+else
+{
+    <table class="table table-responsive" id="tutorsTable">
+        <thead>
+            <tr>
+                <th>Tutor's Image</th>
+                <th>Tutor Name</th>
+                <th>Tutor Age</th>
+                <th>Tutor Gender</th>
+                <th>Qualification</th>
+                <th>Diploma Name</th>
+                <th>Degree Name</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var tutor in Tutors)
+            {
+                <tr>
+                    <td><img src="@tutor.TutorImg" alt="" style="width: 170px; height: 170px;" /></td>
+                    <td>@tutor.TutorName</td>
+                    <td>@tutor.TutorAge</td>
+                    <td>@tutor.TutorGender</td>
+                    <td><a href="@tutor.Qualification" target="_blank">Link to Qualification</a></td>
+                    <td>@tutor.Diploma?.DiplomaName</td>
+                    <td>@tutor.Degree?.DegreeName</td>
+                    <td>
+                        <a href="/tutors/view/@tutor.Id" class="btn btn-primary">
+                            <span class="oi oi-book"></span>
+                        </a>
+                        <a href="/tutors/edit/@tutor.Id" class="btn btn-warning">
+                            <span class="oi oi-pencil"></span>
+                        </a>
+                        <button class="btn btn-danger" @onclick="@(()=>Delete(tutor.Id))">
+                            <span class="oi oi-delete"></span>
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<br />
+
+@code {
+    private List<Tutor>? Tutors;
+
+
+    protected async override Task OnInitializedAsync()
+    {
+        _interceptor.MonitorEvent();
+        Tutors = await _client.GetFromJsonAsync<List<Tutor>>($"{Endpoints.TutorsEndpoint}");
+
+    }
+
+    async Task Delete(int tutorID)
+    {
+        if (Tutors != null)
+        {
+            var tutor = Tutors.First(q => q.Id == tutorID);
+            var confirm = await js.InvokeAsync<bool>("confirm", $"Do you want to delete {tutor.Id}?");
+            if (confirm)
+            {
+                await _client.DeleteAsync($"{Endpoints.TutorsEndpoint}/{tutorID}");
+                await OnInitializedAsync();
+            }
+        }
+    }
+
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+         await js.InvokeVoidAsync("AddDataTable", "#tutorsTable");
+    }
+
+    public void Dispose()
+    {
+        js.InvokeVoidAsync("DataTablesDispose", "#tutorsTable");
+    }
+}
+ *@
+
+@page "/tutors/"
+@inject HttpClient _client
+@inject IJSRuntime js
+@attribute [Authorize]
+@inject HttpInterceptorService _interceptor
+@implements IDisposable
+
+<style>
+    /* Add the suggested CSS styles here */
+    body {
+        background-color: #f0e8f9; /* Light purple background */
+        color: #000000; /* Dark text color */
+        font-family: 'Arial', sans-serif; /* Use a suitable font */
+    }
+
+    h3 {
+        color: #6b5296; /* Purple heading color */
+    }
+
+    .btn {
+        background-color: #8752ad; /* Purple button color */
+        color: #ffffff; /* White text for buttons */
+    }
+
+    img {
+        border-radius: 8px; /* Rounded corners for images */
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+
+    th, td {
+        padding: 12px;
+        border: 1px solid #ddd;
+    }
+
+    th {
+        background-color: #8752ad; /* Purple header background */
+        color: #000000;
+    }
+
+    tr:nth-child(even) {
+        background-color: #f9f9f9; /* Zebra striping */
+    }
+
+    a {
+        color: #8752ad; /* Purple link color */
+    }
+
+        a:hover {
+            text-decoration: underline; /* Underline on hover */
+        }
+
+    td a {
+        color: #1e7fd0; /* Blue color for qualification links */
+    }
+</style>
+
+<h3 class="card-title">Tutor Register</h3>
+<a href="/tutors/register" class="btn btn-secondary">
+    <span class="oi oi-plus"></span>
+    Register new Tutor
+</a>
+<br />
+<br />
+@if (Tutors == null)
+{
+    <div class="alert alert-info">Loading tutors...</div>
+}
+else
+{
+    <table class="table table-responsive" id="tutorsTable">
+        <thead>
+            <tr>
+                <th>Tutor's Image</th>
+                <th>Tutor Name</th>
+                <th>Tutor Age</th>
+                <th>Tutor Gender</th>
+                <th>Qualification</th>
+                <th>Diploma Name</th>
+                <th>Degree Name</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var tutor in Tutors)
+            {
+                <tr>
+                    <td><img src="@tutor.TutorImg" alt="" style="width: 170px; height: 170px;" /></td>
+                    <td>@tutor.TutorName</td>
+                    <td>@tutor.TutorAge</td>
+                    <td>@tutor.TutorGender</td>
+                    <td><a href="@tutor.Qualification" target="_blank">Link to Qualification</a></td>
+                    <td>@tutor.Diploma?.DiplomaName</td>
+                    <td>@tutor.Degree?.DegreeName</td>
+                    <td>
+                        <a href="/tutors/view/@tutor.Id" class="btn btn-primary">
+                            <span class="oi oi-book"></span> View
+                        </a>
+                        <a href="/tutors/edit/@tutor.Id" class="btn btn-warning">
+                            <span class="oi oi-pencil"></span> Edit
+                        </a>
+                        <button class="btn btn-danger" @onclick="@(()=>Delete(tutor.Id))">
+                            <span class="oi oi-delete"></span> Delete
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<Tutor>? Tutors;
+
+    protected async override Task OnInitializedAsync()
+    {
+        _interceptor.MonitorEvent();
+        Tutors = await _client.GetFromJsonAsync<List<Tutor>>($"{Endpoints.TutorsEndpoint}");
+    }
+
+    async Task Delete(int tutorID)
+    {
+        if (Tutors != null)
+        {
+            var tutor = Tutors.First(q => q.Id == tutorID);
+            var confirm = await js.InvokeAsync<bool>("confirm", $"Do you want to delete {tutor.Id}?");
+            if (confirm)
+            {
+                await _client.DeleteAsync($"{Endpoints.TutorsEndpoint}/{tutorID}");
+                await OnInitializedAsync();
+            }
+        }
+    }
+
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+        await js.InvokeVoidAsync("AddDataTable", "#tutorsTable");
+    }
+
+    public void Dispose()
+    {
+        js.InvokeVoidAsync("DataTablesDispose", "#tutorsTable");
+    }
+}

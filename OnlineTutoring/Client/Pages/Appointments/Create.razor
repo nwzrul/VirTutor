@@ -1,0 +1,159 @@
+﻿
+@page "/appointments/register/"
+@inject HttpClient _client
+@inject NavigationManager _navManager
+
+<style>
+    /* Add the suggested CSS styles here */
+    body {
+        background-color: #f0e8f9; /* Light purple background */
+        color: #000000; /* Dark text color */
+        font-family: 'Arial', sans-serif; /* Use a suitable font */
+    }
+
+    h3 {
+        color: #6b5296; /* Purple heading color */
+    }
+
+    .btn {
+        background-color: #8752ad; /* Purple button color */
+        color: #ffffff; /* White text for buttons */
+    }
+
+    img {
+        border-radius: 8px; /* Rounded corners for images */
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+
+    th, td {
+        padding: 12px;
+        border: 1px solid #ddd;
+    }
+
+    th {
+        background-color: #8752ad; /* Purple header background */
+        color: #000000;
+    }
+
+    tr:nth-child(even) {
+        background-color: #f9f9f9; /* Zebra striping */
+    }
+
+    a {
+        color: #8752ad; /* Purple link color */
+    }
+
+        a:hover {
+            text-decoration: underline; /* Underline on hover */
+        }
+
+    td a {
+        color: #1e7fd0; /* Blue color for qualification links */
+    }
+</style>
+
+<h3 class="card-title"> Register a Appointment</h3>
+
+@* <FormComponent ButtonText="Register Tutor" tutor="tutor" OnValidSubmit="@RegisterTutor" /> *@
+
+<EditForm Model="@appointment" OnValidSubmit="RegisterAppointment">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <div class="form-group">
+        <label>Appointment Title:</label>
+        <div>
+            <InputText @bind-Value="@appointment.Title" class="form-control" />
+            <ValidationMessage For="@(() => appointment.Title)" />
+        </div>
+    </div>
+    <div class="form-group">
+        <label>Appointment Age: </label>
+        <div>
+            <InputText @bind-Value="appointment.Mode" class="form-control" />
+            <ValidationMessage For="@(()=> appointment.Mode)" />
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>Appointment Date: </label>
+        <div>
+            <InputDate @bind-Value="@appointment.DateIn" class="form-control" />
+            <ValidationMessage For="@(()=> appointment.DateOut)" />
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>Poster: </label>
+        <div>
+            <InputSelect @bind-Value="@appointment.PosterId" class="form-control">
+                <option value="">--Select Listing</option>/>
+                @if (Posters != null)
+                {
+                    foreach (var poster in Posters)
+                    {
+                        <option value="@poster.Id">@poster.Description</option>
+                    }
+                }
+            </InputSelect>
+            <ValidationMessage For="@(() => appointment.PosterId)" />
+
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>Time Slot: </label>
+        <div>
+            <InputSelect @bind-Value="@appointment.Time" class="form-control">
+                <option value="">--Select Time Slot</option>
+                <option value="9am-11am">9 am - 11 am</option>
+                <option value="11am-1pm">11 am - 1 pm</option>
+                <option value="1pm-3pm">1 pm - 3 pm</option>
+                <option value="3pm-5pm">3 pm - 5 pm</option>
+                <option value="5pm-7pm">5 pm - 7 pm</option>
+                <option value="7pm-9pm">7 pm - 9 pm</option>
+                
+                <!-- Add more time slots as needed -->
+            </InputSelect>
+            <ValidationMessage For="@(() => appointment.Time)" />
+        </div>
+    </div>
+   
+    <button type="submit" class="btn btn-success btn-block">
+        Register Appointment
+    </button>
+
+</EditForm>
+
+
+@code {
+
+    Appointment appointment = new Appointment();
+
+    private IList<Gender>? Genders;
+    private IList<Tutor>? Tutors;
+    private IList<Appointment>? Appointments;
+    private IList<Poster>? Posters;
+    private IList<Student>? Students;
+   
+
+
+
+    protected async override Task OnInitializedAsync()
+    {
+        Posters = await _client.GetFromJsonAsync<List<Poster>>($"{Endpoints.PostersEndpoint}");
+        Students = await _client.GetFromJsonAsync<List<Student>>($"{Endpoints.StudentsEndpoint}");
+        
+    }
+
+    private async Task RegisterAppointment()
+    {
+        await _client.PostAsJsonAsync(Endpoints.AppointmentsEndpoint, appointment);
+        _navManager.NavigateTo("/appointments/");
+    }
+
+}

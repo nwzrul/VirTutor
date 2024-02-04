@@ -1,0 +1,149 @@
+﻿@page "/posters/"
+@inject HttpClient _client
+@inject IJSRuntime js
+@attribute [Authorize]
+@inject HttpInterceptorService _interceptor
+@implements IDisposable
+
+<style>
+    /* Add the suggested CSS styles here */
+    body {
+        background-color: #f0e8f9; /* Light purple background */
+        color: #000000; /* Dark text color */
+        font-family: 'Arial', sans-serif; /* Use a suitable font */
+    }
+
+    h3 {
+        color: #6b5296; /* Purple heading color */
+    }
+
+    .btn {
+        background-color: #8752ad; /* Purple button color */
+        color: #ffffff; /* White text for buttons */
+    }
+
+    img {
+        border-radius: 8px; /* Rounded corners for images */
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+
+    th, td {
+        padding: 12px;
+        border: 1px solid #ddd;
+    }
+
+    th {
+        background-color: #8752ad; /* Purple header background */
+        color: #000000;
+    }
+
+    tr:nth-child(even) {
+        background-color: #f9f9f9; /* Zebra striping */
+    }
+
+    a {
+        color: #8752ad; /* Purple link color */
+    }
+
+        a:hover {
+            text-decoration: underline; /* Underline on hover */
+        }
+
+    td a {
+        color: #1e7fd0; /* Blue color for qualification links */
+    }
+</style>
+
+<h3 class="card-title">Posters</h3>
+<a href="/posters/register" class="btn btn-secondary">
+    <span class="oi oi-plus"></span>
+    Register a Poster
+</a>
+<br />
+<br />
+@if (Posters == null)
+{
+    <div class="alert alert-info">Loading posters...</div>
+}
+else
+{
+    <table class="table table-responsive" id="postersTable">
+        <thead>
+            <tr>
+                <th>Poster</th>
+                <th>Description</th>
+                <th>Course Price</th>
+                <th>Subject Level</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var poster in Posters)
+            {
+                <tr>
+                    <td><img class="card-img top" src="@poster.Image" alt="Card image cap" /></td>
+                    <td>@poster.Description</td>
+                    <td>@poster.CoursePrice</td>
+        
+                    <td>@poster.Subject.SubjectLevel</td>
+                 
+                   
+                    @*<div class="subject-type">@poster.Subject?.SubjectLevel</div> *@
+                    @* <div class="tutor-name">@poster.Tutor.TutorName</div> *@
+                    <td>
+                        <a href="/posters/view/@poster.Id" class="btn btn-primary">
+                            <span class="oi oi-book"></span>
+                        </a>
+                        <a href="/posters/edit/@poster.Id" class="btn btn-warning">
+                            <span class="oi oi-pencil"></span>
+                        </a>
+                        <button class="btn btn-danger" @onclick="@(()=>Delete(poster.Id))">
+                            <span class="oi oi-delete"></span>
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<br /> 
+
+@code {
+    private List<Poster>? Posters;
+
+    protected async override Task OnInitializedAsync()
+    {
+        _interceptor.MonitorEvent();
+        Posters = await _client.GetFromJsonAsync<List<Poster>>($"{Endpoints.PostersEndpoint}");
+    }
+
+    async Task Delete(int posterID)
+    {
+        if (Posters != null)
+        {
+            var poster = Posters.First(q => q.Id == posterID);
+            var confirm = await js.InvokeAsync<bool>("confirm", $"Do you want to delete {poster.Id}?");
+            if (confirm)
+            {
+                await _client.DeleteAsync($"{Endpoints.PostersEndpoint}/{posterID}");
+                await OnInitializedAsync();
+            }
+        }
+    }
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+        await js.InvokeVoidAsync("AddDataTable", "#postersTable");
+    }
+
+    public void Dispose()
+    {
+        js.InvokeVoidAsync("DataTablesDispose", "#postersTable");
+    }
+}
+ 

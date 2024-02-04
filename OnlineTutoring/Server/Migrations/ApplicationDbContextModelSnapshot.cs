@@ -8,7 +8,7 @@ using OnlineTutoring.Server.Data;
 
 #nullable disable
 
-namespace OnlineTutoring.Server.Data.Migrations
+namespace OnlineTutoring.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     partial class ApplicationDbContextModelSnapshot : ModelSnapshot
@@ -396,7 +396,7 @@ namespace OnlineTutoring.Server.Data.Migrations
                         {
                             Id = "3781efa7-66dc-47f0-860f-e506d04102e4",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "f48d9c77-e7f7-4841-85c2-dedaf5028df9",
+                            ConcurrencyStamp = "67df09c3-8a85-44a6-b97a-aa0d244d79d8",
                             Email = "admin@localhost.com",
                             EmailConfirmed = false,
                             FirstName = "Admin",
@@ -404,9 +404,9 @@ namespace OnlineTutoring.Server.Data.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@LOCALHOST.COM",
                             NormalizedUserName = "ADMIN@LOCALHOST.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEG1ikp9IAP1YeUZaNYdljHQaClbJJhqTaVFlxRX/aIzP0TyiCXHUAtO9RORG53oTOg==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEOD0uHI5/ZzNhIhR2yY1C+8cI/fa73Xi63WTPTFLGLtEwtIXRoiWFfQqsss0AkMfVA==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "52eefd9d-ca29-401e-b6f5-fa1c797a7fd8",
+                            SecurityStamp = "de610e5d-c724-49e8-a655-eda92ee7e206",
                             TwoFactorEnabled = false,
                             UserName = "admin@localhost.com"
                         });
@@ -435,8 +435,31 @@ namespace OnlineTutoring.Server.Data.Migrations
                     b.Property<DateTime>("DateUpdated")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Mode")
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("Duration")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Mode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("PosterId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("StudentId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Time")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<int?>("TutorId")
                         .HasColumnType("int");
@@ -445,6 +468,10 @@ namespace OnlineTutoring.Server.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("PosterId");
+
+                    b.HasIndex("StudentId");
 
                     b.HasIndex("TutorId");
 
@@ -488,7 +515,7 @@ namespace OnlineTutoring.Server.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Credits");
+                    b.ToTable("CreditCard");
                 });
 
             modelBuilder.Entity("OnlineTutoring.Shared.Domain.Degree", b =>
@@ -508,17 +535,11 @@ namespace OnlineTutoring.Server.Data.Migrations
                     b.Property<DateTime>("DateUpdated")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("DegreeLevel")
+                    b.Property<string>("DegreeName")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("DegreeSchool")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("DegreeType")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("DegreeYear")
-                        .HasColumnType("int");
 
                     b.Property<string>("UpdatedBy")
                         .HasColumnType("nvarchar(max)");
@@ -526,6 +547,28 @@ namespace OnlineTutoring.Server.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Degrees");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedBy = "System",
+                            DateCreated = new DateTime(2024, 2, 4, 22, 45, 1, 594, DateTimeKind.Local).AddTicks(9695),
+                            DateUpdated = new DateTime(2024, 2, 4, 22, 45, 1, 594, DateTimeKind.Local).AddTicks(9696),
+                            DegreeName = "Computer Science",
+                            DegreeSchool = "NUS",
+                            UpdatedBy = "System"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CreatedBy = "System",
+                            DateCreated = new DateTime(2024, 2, 4, 22, 45, 1, 594, DateTimeKind.Local).AddTicks(9698),
+                            DateUpdated = new DateTime(2024, 2, 4, 22, 45, 1, 594, DateTimeKind.Local).AddTicks(9698),
+                            DegreeName = "Early Childhood",
+                            DegreeSchool = "UTP",
+                            UpdatedBy = "System"
+                        });
                 });
 
             modelBuilder.Entity("OnlineTutoring.Shared.Domain.Diploma", b =>
@@ -545,13 +588,10 @@ namespace OnlineTutoring.Server.Data.Migrations
                     b.Property<DateTime>("DateUpdated")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("DiplomaLevel")
+                    b.Property<string>("DiplomaName")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("DiplomaSchool")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("DiplomaType")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("DiplomaYear")
@@ -563,6 +603,30 @@ namespace OnlineTutoring.Server.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Diplomas");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedBy = "System",
+                            DateCreated = new DateTime(2024, 2, 4, 22, 45, 1, 594, DateTimeKind.Local).AddTicks(9480),
+                            DateUpdated = new DateTime(2024, 2, 4, 22, 45, 1, 594, DateTimeKind.Local).AddTicks(9494),
+                            DiplomaName = "Computer Science",
+                            DiplomaSchool = "Temasek Polytechnic",
+                            DiplomaYear = 0,
+                            UpdatedBy = "System"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CreatedBy = "System",
+                            DateCreated = new DateTime(2024, 2, 4, 22, 45, 1, 594, DateTimeKind.Local).AddTicks(9497),
+                            DateUpdated = new DateTime(2024, 2, 4, 22, 45, 1, 594, DateTimeKind.Local).AddTicks(9498),
+                            DiplomaName = "Early Childhood",
+                            DiplomaSchool = "Republic Polytechnic",
+                            DiplomaYear = 0,
+                            UpdatedBy = "System"
+                        });
                 });
 
             modelBuilder.Entity("OnlineTutoring.Shared.Domain.Message", b =>
@@ -585,13 +649,35 @@ namespace OnlineTutoring.Server.Data.Migrations
                     b.Property<string>("MessageContent")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Status")
+                    b.Property<int?>("MessageId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ReceiverId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("SenderId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SenderName")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("StudentID")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Timestamp")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("TutorID")
+                        .HasColumnType("int");
 
                     b.Property<string>("UpdatedBy")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("StudentID");
+
+                    b.HasIndex("TutorID");
 
                     b.ToTable("Messages");
                 });
@@ -651,36 +737,29 @@ namespace OnlineTutoring.Server.Data.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("Image")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("SubjectId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("TutorId")
+                        .HasColumnType("int");
 
                     b.Property<string>("UpdatedBy")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Posters");
+                    b.HasIndex("SubjectId");
 
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CoursePrice = 150.99000000000001,
-                            CreatedBy = "System",
-                            DateCreated = new DateTime(2024, 1, 13, 14, 51, 17, 792, DateTimeKind.Local).AddTicks(1528),
-                            DateUpdated = new DateTime(2024, 1, 13, 14, 51, 17, 792, DateTimeKind.Local).AddTicks(1541),
-                            Description = "Math for Meth-Heads",
-                            UpdatedBy = "System"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            CoursePrice = 299.99000000000001,
-                            CreatedBy = "System",
-                            DateCreated = new DateTime(2024, 1, 13, 14, 51, 17, 792, DateTimeKind.Local).AddTicks(1544),
-                            DateUpdated = new DateTime(2024, 1, 13, 14, 51, 17, 792, DateTimeKind.Local).AddTicks(1544),
-                            Description = "Science",
-                            UpdatedBy = "System"
-                        });
+                    b.HasIndex("TutorId");
+
+                    b.ToTable("Posters");
                 });
 
             modelBuilder.Entity("OnlineTutoring.Shared.Domain.Qualification", b =>
@@ -725,8 +804,13 @@ namespace OnlineTutoring.Server.Data.Migrations
                     b.Property<DateTime>("DateUpdated")
                         .HasColumnType("datetime2");
 
+                    b.Property<int?>("PosterId")
+                        .HasColumnType("int");
+
                     b.Property<string>("ReviewContent")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<int>("Stars")
                         .HasColumnType("int");
@@ -735,6 +819,8 @@ namespace OnlineTutoring.Server.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("PosterId");
 
                     b.ToTable("Reviews");
                 });
@@ -768,8 +854,13 @@ namespace OnlineTutoring.Server.Data.Migrations
                     b.Property<string>("StudentGender")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("StudentName")
+                    b.Property<string>("StudentImg")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("StudentName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("UpdatedBy")
                         .HasColumnType("nvarchar(max)");
@@ -777,34 +868,6 @@ namespace OnlineTutoring.Server.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Students");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CreatedBy = "System",
-                            DateCreated = new DateTime(2024, 1, 13, 14, 51, 17, 715, DateTimeKind.Local).AddTicks(4500),
-                            DateUpdated = new DateTime(2024, 1, 13, 14, 51, 17, 715, DateTimeKind.Local).AddTicks(4501),
-                            ParentsContact = 456,
-                            StudentAge = 11,
-                            StudentContact = 123,
-                            StudentGender = "Male",
-                            StudentName = "John",
-                            UpdatedBy = "System"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            CreatedBy = "System",
-                            DateCreated = new DateTime(2024, 1, 13, 14, 51, 17, 715, DateTimeKind.Local).AddTicks(4503),
-                            DateUpdated = new DateTime(2024, 1, 13, 14, 51, 17, 715, DateTimeKind.Local).AddTicks(4504),
-                            ParentsContact = 456,
-                            StudentAge = 18,
-                            StudentContact = 123,
-                            StudentGender = "Female",
-                            StudentName = "Aliyah",
-                            UpdatedBy = "System"
-                        });
                 });
 
             modelBuilder.Entity("OnlineTutoring.Shared.Domain.Subject", b =>
@@ -824,6 +887,9 @@ namespace OnlineTutoring.Server.Data.Migrations
                     b.Property<DateTime>("DateUpdated")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("SubjectImg")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("SubjectLevel")
                         .HasColumnType("nvarchar(max)");
 
@@ -836,28 +902,6 @@ namespace OnlineTutoring.Server.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Subjects");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CreatedBy = "System",
-                            DateCreated = new DateTime(2024, 1, 13, 14, 51, 17, 715, DateTimeKind.Local).AddTicks(4765),
-                            DateUpdated = new DateTime(2024, 1, 13, 14, 51, 17, 715, DateTimeKind.Local).AddTicks(4766),
-                            SubjectLevel = "Secondary 1",
-                            SubjectType = "English",
-                            UpdatedBy = "System"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            CreatedBy = "System",
-                            DateCreated = new DateTime(2024, 1, 13, 14, 51, 17, 715, DateTimeKind.Local).AddTicks(4768),
-                            DateUpdated = new DateTime(2024, 1, 13, 14, 51, 17, 715, DateTimeKind.Local).AddTicks(4769),
-                            SubjectLevel = "Secondary 4",
-                            SubjectType = "Math",
-                            UpdatedBy = "System"
-                        });
                 });
 
             modelBuilder.Entity("OnlineTutoring.Shared.Domain.Tutor", b =>
@@ -877,45 +921,45 @@ namespace OnlineTutoring.Server.Data.Migrations
                     b.Property<DateTime>("DateUpdated")
                         .HasColumnType("datetime2");
 
+                    b.Property<int?>("DegreeID")
+                        .HasColumnType("int");
+
+                    b.Property<string>("DegreeName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("DiplomaID")
+                        .HasColumnType("int");
+
+                    b.Property<string>("DiplomaName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Qualification")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("TutorAge")
                         .HasColumnType("int");
 
                     b.Property<string>("TutorGender")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("TutorName")
+                    b.Property<string>("TutorImg")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TutorName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("UpdatedBy")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Tutors");
+                    b.HasIndex("DegreeID");
 
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CreatedBy = "System",
-                            DateCreated = new DateTime(2024, 1, 13, 14, 51, 17, 715, DateTimeKind.Local).AddTicks(4046),
-                            DateUpdated = new DateTime(2024, 1, 13, 14, 51, 17, 715, DateTimeKind.Local).AddTicks(4063),
-                            TutorAge = 33,
-                            TutorGender = "Male",
-                            TutorName = "Walid",
-                            UpdatedBy = "System"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            CreatedBy = "System",
-                            DateCreated = new DateTime(2024, 1, 13, 14, 51, 17, 715, DateTimeKind.Local).AddTicks(4065),
-                            DateUpdated = new DateTime(2024, 1, 13, 14, 51, 17, 715, DateTimeKind.Local).AddTicks(4066),
-                            TutorAge = 33,
-                            TutorGender = "Female",
-                            TutorName = "Chantel",
-                            UpdatedBy = "System"
-                        });
+                    b.HasIndex("DiplomaID");
+
+                    b.ToTable("Tutors");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -971,9 +1015,84 @@ namespace OnlineTutoring.Server.Data.Migrations
 
             modelBuilder.Entity("OnlineTutoring.Shared.Domain.Appointment", b =>
                 {
-                    b.HasOne("OnlineTutoring.Shared.Domain.Tutor", null)
+                    b.HasOne("OnlineTutoring.Shared.Domain.Poster", "Poster")
+                        .WithMany("Apppointments")
+                        .HasForeignKey("PosterId");
+
+                    b.HasOne("OnlineTutoring.Shared.Domain.Student", "Student")
+                        .WithMany()
+                        .HasForeignKey("StudentId");
+
+                    b.HasOne("OnlineTutoring.Shared.Domain.Tutor", "Tutor")
                         .WithMany("Appointments")
                         .HasForeignKey("TutorId");
+
+                    b.Navigation("Poster");
+
+                    b.Navigation("Student");
+
+                    b.Navigation("Tutor");
+                });
+
+            modelBuilder.Entity("OnlineTutoring.Shared.Domain.Message", b =>
+                {
+                    b.HasOne("OnlineTutoring.Shared.Domain.Student", "Student")
+                        .WithMany()
+                        .HasForeignKey("StudentID");
+
+                    b.HasOne("OnlineTutoring.Shared.Domain.Tutor", "Tutor")
+                        .WithMany()
+                        .HasForeignKey("TutorID");
+
+                    b.Navigation("Student");
+
+                    b.Navigation("Tutor");
+                });
+
+            modelBuilder.Entity("OnlineTutoring.Shared.Domain.Poster", b =>
+                {
+                    b.HasOne("OnlineTutoring.Shared.Domain.Subject", "Subject")
+                        .WithMany()
+                        .HasForeignKey("SubjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("OnlineTutoring.Shared.Domain.Tutor", "Tutor")
+                        .WithMany()
+                        .HasForeignKey("TutorId");
+
+                    b.Navigation("Subject");
+
+                    b.Navigation("Tutor");
+                });
+
+            modelBuilder.Entity("OnlineTutoring.Shared.Domain.Review", b =>
+                {
+                    b.HasOne("OnlineTutoring.Shared.Domain.Poster", null)
+                        .WithMany("Reviews")
+                        .HasForeignKey("PosterId");
+                });
+
+            modelBuilder.Entity("OnlineTutoring.Shared.Domain.Tutor", b =>
+                {
+                    b.HasOne("OnlineTutoring.Shared.Domain.Degree", "Degree")
+                        .WithMany()
+                        .HasForeignKey("DegreeID");
+
+                    b.HasOne("OnlineTutoring.Shared.Domain.Diploma", "Diploma")
+                        .WithMany()
+                        .HasForeignKey("DiplomaID");
+
+                    b.Navigation("Degree");
+
+                    b.Navigation("Diploma");
+                });
+
+            modelBuilder.Entity("OnlineTutoring.Shared.Domain.Poster", b =>
+                {
+                    b.Navigation("Apppointments");
+
+                    b.Navigation("Reviews");
                 });
 
             modelBuilder.Entity("OnlineTutoring.Shared.Domain.Tutor", b =>

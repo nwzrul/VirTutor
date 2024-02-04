@@ -1,0 +1,111 @@
+﻿@inject HttpClient _client
+<EditForm Model="@tutor" OnValidSubmit="@OnValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <fieldset disabled="@Disabled" >
+    <div class="form-group">
+        <label>Tutor's Image':</label>
+        <div>
+            <img src="@tutor.TutorImg" style="width: 250px; height: 250px;"> <br /> <br />
+            <InputFile OnChange="@OnInputFileChanged"></InputFile>
+        </div>
+    </div>
+    <div class="form-group">
+        <label>Tutor Name:</label>
+        <div>
+            <InputText @bind-Value="@tutor.TutorName" class="form-control" />
+            <ValidationMessage For="@(() => tutor.TutorName)" />
+        </div>
+    </div>
+    <div class="form-group">
+        <label>Tutor Age:</label>
+        <div>
+            <InputNumber @bind-Value="@tutor.TutorAge" class="form-control" />
+            <ValidationMessage For="@(() => tutor.TutorAge)" />
+        </div>
+    </div>
+    <div class="form-group">
+        <label>Tutor Gender:</label>
+        <div>
+            <InputSelect @bind-Value="@tutor.TutorGender" class="form-control">
+                <option value="">-- Select Gender --</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="An Individual">Individual</option>
+            </InputSelect>
+            <ValidationMessage For="@(() => tutor.TutorGender)" />
+        </div>
+    </div>
+    <div class="form-group">
+        <label>Qualifications: </label>
+        <div>
+            <InputText @bind-Value="tutor.Qualification" class="form-control" />
+            <ValidationMessage For="@(()=> tutor.Qualification)" />
+        </div>
+    </div>
+    <div class="form-group">
+        <label>Diploma Name: </label>
+        <div>
+            <InputSelect @bind-Value="tutor.DiplomaID" class="form-control">
+                <option value="">-- Select Diploma --</option>
+                @if (Diplomas != null)
+                {
+                    foreach (var diploma in Diplomas)
+                    {
+                        <option value="@diploma.Id">@diploma.DiplomaName</option>
+                    }
+                }
+            </InputSelect>
+            <ValidationMessage For="@(()=> tutor.DiplomaID)" />
+        </div>
+        </div>
+    <div class="form-group">
+        <label>Degree Name:</label>
+        <div>
+             <InputSelect @bind-Value="tutor.DegreeID" class="form-control">
+                <option value="">-- Select Degree --</option>
+                @if (Degrees != null)
+                {
+                    foreach (var degree in Degrees)
+                    {
+                        <option value="@degree.Id">@degree.DegreeName</option>
+                    }
+                }
+            </InputSelect>
+            <ValidationMessage For="@(()=> tutor.DegreeID)" />
+        </div>
+    </div>
+    </fieldset>
+    @if (!Disabled)
+    {
+        <button type="submit" class="btn btn-success btn-block">
+            @ButtonText
+        </button>
+    }
+    <BackToList Target="tutors" />
+</EditForm>
+
+@code {
+    [Parameter] public bool Disabled { get; set; } = false;
+    [Parameter] public Tutor? tutor { get; set; }
+    [Parameter] public string ButtonText { get; set; } = "Save";
+    [Parameter] public EventCallback OnValidSubmit { get; set; }
+
+    private IList<Diploma>? Diplomas;
+    private IList<Degree>? Degrees;
+
+    protected async override Task OnInitializedAsync()
+    {
+        Diplomas = await _client.GetFromJsonAsync<List<Diploma>>($"{Endpoints.DiplomasEndpoint}");
+        Degrees = await _client.GetFromJsonAsync<List<Degree>>($"{Endpoints.DegreesEndpoint}");
+    }
+    private async Task OnInputFileChanged(InputFileChangeEventArgs inputFileChangeEvent)
+    {
+        var file = inputFileChangeEvent.File;
+
+        var buffer = new byte[file.Size];
+        await file.OpenReadStream().ReadAsync(buffer);
+
+        tutor.TutorImg = $"data:image/png;base64,{Convert.ToBase64String(buffer)}";
+    }
+}

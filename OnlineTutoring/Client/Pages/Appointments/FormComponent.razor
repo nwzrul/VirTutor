@@ -1,0 +1,66 @@
+﻿<EditForm Model="@appointment" OnValidSubmit="@OnValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <fieldset disabled="@Disabled">
+    
+     <div class="form-group">
+        <label>Appointment Title:</label>
+        <div>
+            <InputText @bind-Value="@appointment.Title" class="form-control" />
+            <ValidationMessage For="@(() => appointment.Title)" />
+        </div>
+    </div>
+    <div class="form-group">
+        <label>Appointment Age: </label>
+        <div>
+            <InputText @bind-Value="appointment.Mode" class="form-control" />
+            <ValidationMessage For="@(()=> appointment.Mode)" />
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>Appointment Date: </label>
+        <div>
+            <InputDate @bind-Value="@appointment.DateIn" class="form-control" />
+            <ValidationMessage For="@(()=> appointment.DateOut)" />
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>Poster: </label>
+        <div>
+            <InputSelect @bind-Value="@appointment.PosterId" class="form-control">
+                <option value="">--Select Listing</option>/>
+                @if (Posters != null)
+                {
+                    foreach (var poster in Posters)
+                    {
+                        <option value="@poster.Id">@poster.Description</option>
+                    }
+                }
+            </InputSelect>
+            <ValidationMessage For="@(() => appointment.PosterId)" />
+
+        </div>
+    </div>
+
+    </fieldset>
+    @if (!Disabled)
+    {
+        <button type="submit" class="btn btn-success btn-block">
+            @ButtonText
+        </button>
+    }
+    <BackToList Target="appointments" />
+</EditForm>
+
+@code {
+
+    [Parameter] public bool Disabled { get; set; } = false;
+    [Parameter] public Appointment? appointment { get; set; }
+    [Parameter] public string ButtonText { get; set; } = "Save";
+    [Parameter] public EventCallback OnValidSubmit { get; set; }
+    [Parameter] public IList<Poster>? Posters { get; set; }
+
+
+}

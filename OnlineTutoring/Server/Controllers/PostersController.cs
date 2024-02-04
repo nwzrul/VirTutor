@@ -34,7 +34,7 @@ namespace OnlineTutoring.Server.Controllers
             //{
             //return NotFound();
             //}
-            var posters = await _unitOfWork.Posters.GetAll();
+            var posters = await _unitOfWork.Posters.GetAll(includes: q => q.Include(x => x.Subject));
             return Ok(posters);
             //return await _context.Makes.ToListAsync();
         }

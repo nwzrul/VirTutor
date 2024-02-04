@@ -27,15 +27,19 @@ namespace OnlineTutoring.Server.Data
         public DbSet<Degree> Degrees { get; set; }
         public DbSet<CreditCard> Credits { get; set; }
 
+        public DbSet<CreditCard> Appointments { get; set; }
+
+       
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
 
-            builder.ApplyConfiguration(new TutorSeedConfiguration());
+            //builder.ApplyConfiguration(new TutorSeedConfiguration());
 
-            builder.ApplyConfiguration(new StudentSeedConfiguration());
+            //builder.ApplyConfiguration(new StudentSeedConfiguration());
 
-            builder.ApplyConfiguration(new SubjectSeedConfiguration());
+            //builder.ApplyConfiguration(new SubjectSeedConfiguration());
 
             builder.ApplyConfiguration(new RoleSeedConfiguration());
 
@@ -43,7 +47,12 @@ namespace OnlineTutoring.Server.Data
 
             builder.ApplyConfiguration(new UserRoleSeedConfiguration());
 
-            builder.ApplyConfiguration(new PosterSeedConfiguration());
+            //builder.ApplyConfiguration(new PosterSeedConfiguration());
+
+            builder.ApplyConfiguration(new DiplomaSeedConfiguration());
+
+            builder.ApplyConfiguration(new DegreeSeedConfiguration());
+
         }
 
     }

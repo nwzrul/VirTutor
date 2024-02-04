@@ -1,0 +1,138 @@
+﻿@page "/students/register/"
+@inject HttpClient _client
+@inject NavigationManager _navManager
+
+<style>
+    /* Add the suggested CSS styles here */
+    body {
+        background-color: #f0e8f9; /* Light purple background */
+        color: #000000; /* Dark text color */
+        font-family: 'Arial', sans-serif; /* Use a suitable font */
+    }
+
+    h3 {
+        color: #6b5296; /* Purple heading color */
+    }
+
+    .btn {
+        background-color: #8752ad; /* Purple button color */
+        color: #ffffff; /* White text for buttons */
+    }
+
+    img {
+        border-radius: 8px; /* Rounded corners for images */
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+
+    th, td {
+        padding: 12px;
+        border: 1px solid #ddd;
+    }
+
+    th {
+        background-color: #8752ad; /* Purple header background */
+        color: #000000;
+    }
+
+    tr:nth-child(even) {
+        background-color: #f9f9f9; /* Zebra striping */
+    }
+
+    a {
+        color: #8752ad; /* Purple link color */
+    }
+
+        a:hover {
+            text-decoration: underline; /* Underline on hover */
+        }
+
+    td a {
+        color: #1e7fd0; /* Blue color for qualification links */
+    }
+</style>
+
+<h3 class="card-title"> Register as Student</h3>
+
+@* <FormComponent ButtonText="Register Student" student="student" OnValidSubmit="@RegisterStudent" /> *@
+
+<EditForm Model="@student" OnValidSubmit="RegisterStudent">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <div class="form-group">
+        <label>Student's Image':</label>
+        <div>
+            <img src="@student.StudentImg" style="width: 250px; height: 250px;"> <br /> <br />
+            <InputFile OnChange="@OnInputFileChanged"></InputFile>
+        </div>
+    </div>
+    <div class="form-group">
+        <label>Student Name:</label>
+        <div>
+            <InputText @bind-Value="@student.StudentName" class="form-control" />
+            <ValidationMessage For="@(() => student.StudentName)" />
+        </div>
+    </div>
+    <div class="form-group">
+        <label>Student Age: </label>
+        <div>
+            <InputNumber @bind-Value="student.StudentAge" class="form-control" />
+            <ValidationMessage For="@(()=> student.StudentAge)" />
+        </div>
+    </div>
+    <div class="form-group">
+        <label>Student Gender:</label>
+        <div>
+            <InputSelect @bind-Value="@student.StudentGender" class="form-control">
+                <option value="">-- Select Gender --</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="An Individual">Individual</option>
+            </InputSelect>
+            <ValidationMessage For="@(() => student.StudentGender)" />
+        </div>
+    </div>
+     <div class="form-group">
+        <label>Student Contact: </label>
+        <div>
+            <InputNumber @bind-Value="student.StudentContact" class="form-control" />
+            <ValidationMessage For="@(()=> student.StudentContact)" />
+        </div>
+    </div>
+    <div class="form-group">
+        <label>Parents Contact: </label>
+        <div>
+            <InputNumber @bind-Value="student.ParentsContact" class="form-control" />
+            <ValidationMessage For="@(()=> student.ParentsContact)" />
+        </div>
+    </div>
+    <button type="submit" class="btn btn-success btn-block">
+        Register Student
+    </button>
+
+</EditForm> 
+
+
+@code {
+
+    Student student = new Student();
+
+    private async Task RegisterStudent()
+    {
+        await _client.PostAsJsonAsync(Endpoints.StudentsEndpoint, student);
+        _navManager.NavigateTo("/students/");
+    }
+    private async Task OnInputFileChanged(InputFileChangeEventArgs inputFileChangeEvent)
+    {
+        var file = inputFileChangeEvent.File;
+
+        var buffer = new byte[file.Size];
+        await file.OpenReadStream().ReadAsync(buffer);
+
+        student.StudentImg = $"data:image/png;base64,{Convert.ToBase64String(buffer)}";
+    }
+}

@@ -1,0 +1,147 @@
+﻿@page "/students/"
+@inject HttpClient _client
+@inject IJSRuntime js
+@attribute [Authorize]
+@inject HttpInterceptorService _interceptor
+@implements IDisposable
+
+<style>
+    /* Add the suggested CSS styles here */
+    body {
+        background-color: #f0e8f9; /* Light purple background */
+        color: #000000; /* Dark text color */
+        font-family: 'Arial', sans-serif; /* Use a suitable font */
+    }
+
+    h3 {
+        color: #6b5296; /* Purple heading color */
+    }
+
+    .btn {
+        background-color: #8752ad; /* Purple button color */
+        color: #ffffff; /* White text for buttons */
+    }
+
+    img {
+        border-radius: 8px; /* Rounded corners for images */
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+
+    th, td {
+        padding: 12px;
+        border: 1px solid #ddd;
+    }
+
+    th {
+        background-color: #8752ad; /* Purple header background */
+        color: #000000;
+    }
+
+    tr:nth-child(even) {
+        background-color: #f9f9f9; /* Zebra striping */
+    }
+
+    a {
+        color: #8752ad; /* Purple link color */
+    }
+
+        a:hover {
+            text-decoration: underline; /* Underline on hover */
+        }
+
+    td a {
+        color: #1e7fd0; /* Blue color for qualification links */
+    }
+</style>
+
+<h3 class="card-title">Student Register</h3>
+<a href="/students/register" class="btn btn-secondary">
+    <span class="oi oi-plus"></span>
+    Register new Student
+</a>
+<br />
+<br />
+@if (Students == null)
+{
+    <div class="alert alert-info">Loading students...</div>
+}
+else
+{
+    <table class="table table-responsive" id="studentsTable">
+        <thead>
+            <tr>
+                <th>Student's Image</th>
+                <th>Student Name</th>
+                <th>Student Age</th>
+                <th>Student Gender</th>
+                <th>Student's Contact Number</th>
+                <th>Parents' Contact Number</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var student in Students)
+            {
+                <tr>
+                    <td><img src="@student.StudentImg" alt="" style="width: 200px; height: 150px;" /></td>
+                    <td>@student.StudentName</td>
+                    <td>@student.StudentAge</td>
+                    <td>@student.StudentGender</td>
+                    <td>@student.StudentContact</td>
+                    <td>@student.ParentsContact</td>
+                    <td>
+                        <a href="/students/view/@student.Id" class="btn btn-primary">
+                            <span class="oi oi-book"></span>
+                        </a>
+                        <a href="/students/edit/@student.Id" class="btn btn-warning">
+                            <span class="oi oi-pencil"></span>
+                        </a>
+                        <button class="btn btn-danger" @onclick="@(()=>Delete(student.Id))">
+                            <span class="oi oi-delete"></span>
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<br />
+
+@code {
+    private List<Student>? Students;
+
+    protected async override Task OnInitializedAsync()
+    {
+        _interceptor.MonitorEvent();
+        Students = await _client.GetFromJsonAsync<List<Student>>($"{Endpoints.StudentsEndpoint}");
+    }
+
+    async Task Delete(int studentID)
+    {
+        if (Students != null)
+        {
+            var student = Students.First(q => q.Id == studentID);
+            var confirm = await js.InvokeAsync<bool>("confirm", $"Do you want to delete {student.Id}?");
+            if (confirm)
+            {
+                await _client.DeleteAsync($"{Endpoints.StudentsEndpoint}/{studentID}");
+                await OnInitializedAsync();
+            }
+        }
+    }
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+        await js.InvokeVoidAsync("AddDataTable", "#studentsTable");
+    }
+
+    public void Dispose()
+    {
+        js.InvokeVoidAsync("DataTablesDispose", "#studentsTable");
+    }
+}

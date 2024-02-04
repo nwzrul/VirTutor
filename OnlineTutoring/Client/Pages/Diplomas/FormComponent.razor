@@ -1,0 +1,31 @@
+﻿<EditForm Model="@diploma" OnValidSubmit="@OnValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <fieldset disabled="@Disabled">
+    
+    <div class="form-group">
+        <label>Diploma Name:</label>
+        <div>
+            <InputText @bind-Value="@diploma.DiplomaName" class="form-control" />
+            <ValidationMessage For="@(() => diploma.DiplomaName)" />
+        </div>
+    </div>
+    </fieldset>
+    @if (!Disabled)
+    {
+        <button type="submit" class="btn btn-success btn-block">
+            @ButtonText
+        </button>
+    }
+    <BackToList Target="diplomas" />
+</EditForm>
+
+@code {
+
+    [Parameter] public bool Disabled { get; set; } = false;
+    [Parameter] public Diploma? diploma { get; set; }
+    [Parameter] public string ButtonText { get; set; } = "Save";
+    [Parameter] public EventCallback OnValidSubmit { get; set; }
+
+
+}

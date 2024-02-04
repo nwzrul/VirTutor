@@ -8,9 +8,9 @@ namespace OnlineTutoring.Shared.Domain
 {
     public class Degree : BaseDomainModel
     {
-        public string? DegreeType { get; set; }
-        public string? DegreeLevel { get; set; }
-        public int DegreeYear { get; set; }
+        public string? DegreeName { get; set; }
+        //public string? DegreeLevel { get; set; }
+        //public int DegreeYear { get; set; }
         public string? DegreeSchool { get; set; }
     }
 }

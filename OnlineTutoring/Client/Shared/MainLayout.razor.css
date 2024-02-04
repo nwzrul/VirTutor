@@ -9,11 +9,11 @@ main {
 }
 
 .sidebar {
-    background-color: #4adede;
+    background-color: #795695;
 }
 
 .top-row {
-    background-color: #4adede;
+    background-color: #f7f7f7;
     border-bottom: 1px solid #d6d5d5;
     justify-content: flex-end;
     height: 3.5rem;

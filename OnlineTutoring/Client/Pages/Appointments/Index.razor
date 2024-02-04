@@ -1,0 +1,147 @@
+﻿@page "/appointments/"
+@inject HttpClient _client
+@inject IJSRuntime js
+@attribute [Authorize]
+@inject HttpInterceptorService _interceptor
+@implements IDisposable
+
+<style>
+    /* Add the suggested CSS styles here */
+    body {
+        background-color: #f0e8f9; /* Light purple background */
+        color: #000000; /* Dark text color */
+        font-family: 'Arial', sans-serif; /* Use a suitable font */
+    }
+
+    h3 {
+        color: #6b5296; /* Purple heading color */
+    }
+
+    .btn {
+        background-color: #8752ad; /* Purple button color */
+        color: #ffffff; /* White text for buttons */
+    }
+
+    img {
+        border-radius: 8px; /* Rounded corners for images */
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+
+    th, td {
+        padding: 12px;
+        border: 1px solid #ddd;
+    }
+
+    th {
+        background-color: #8752ad; /* Purple header background */
+        color: #000000;
+    }
+
+    tr:nth-child(even) {
+        background-color: #f9f9f9; /* Zebra striping */
+    }
+
+    a {
+        color: #8752ad; /* Purple link color */
+    }
+
+        a:hover {
+            text-decoration: underline; /* Underline on hover */
+        }
+
+    td a {
+        color: #1e7fd0; /* Blue color for qualification links */
+    }
+</style>
+
+<h3 class="card-title">Appointments</h3>
+<a href="/appointments/register" class="btn btn-secondary">
+    <span class="oi oi-plus"></span>
+    Register a Appointment
+</a>
+<br />
+<br />
+@if (Appointments == null)
+{
+    <div class="alert alert-info">Loading appointments...</div>
+}
+else
+{
+    <table class="table table-responsive" id="appointmentsTable">
+        <thead>
+            <tr>
+                @* <th>Image of Appointment</th> *@
+                <th>Appointment Level</th>
+                <th>Appointment Type</th>
+                <th>Appointment Date</th>
+                <th>Appointment Time</th>
+                <th>Poster</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var appointment in Appointments)
+            {
+                <tr>
+                    @* <td><img src="@appointment.StudentImg" alt="" style="width: 200px; height: 150px;" /></td> *@
+                    <td>@appointment.Title</td>
+                    <td>@appointment.Mode</td>
+                    <td>@appointment.DateIn.Date.ToString("dd MMMM yyyy")</td>
+                    <td>@appointment.Time</td>
+                    <td>@appointment.Poster.Description</td>
+                    <td>
+                        <a href="/appointments/view/@appointment.Id" class="btn btn-primary">
+                            <span class="oi oi-book"></span>
+                        </a>
+                        <a href="/appointments/edit/@appointment.Id" class="btn btn-warning">
+                            <span class="oi oi-pencil"></span>
+                        </a>
+                        <button class="btn btn-danger" @onclick="@(()=>Delete(appointment.Id))">
+                            <span class="oi oi-delete"></span>
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<br />
+
+@code {
+    private List<Appointment>? Appointments;
+
+    protected async override Task OnInitializedAsync()
+    {
+        _interceptor.MonitorEvent();
+        Appointments = await _client.GetFromJsonAsync<List<Appointment>>($"{Endpoints.AppointmentsEndpoint}");
+    }
+
+    async Task Delete(int appointmentID)
+    {
+        if (Appointments != null)
+        {
+            var appointment = Appointments.First(q => q.Id == appointmentID);
+            var confirm = await js.InvokeAsync<bool>("confirm", $"Do you want to delete {appointment.Id}?");
+            if (confirm)
+            {
+                await _client.DeleteAsync($"{Endpoints.AppointmentsEndpoint}/{appointmentID}");
+                await OnInitializedAsync();
+            }
+        }
+    }
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+        await js.InvokeVoidAsync("AddDataTable", "#appointmentsTable");
+    }
+
+    public void Dispose()
+    {
+        js.InvokeVoidAsync("DataTablesDispose", "#appointmentsTable");
+    }
+}

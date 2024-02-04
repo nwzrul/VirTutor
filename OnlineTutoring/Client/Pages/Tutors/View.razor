@@ -1,0 +1,62 @@
+﻿@page "/tutors/view/{id:int}"
+@inject HttpClient _client
+@inject NavigationManager _navManager
+
+<style>
+    /* Add the suggested CSS styles here */
+    body {
+        background-color: #f0e8f9; /* Light purple background */
+        color: #000000; /* Black text color */
+        font-family: 'Arial', sans-serif; /* Use a suitable font */
+    }
+
+    h3 {
+        color: #6b5296; /* Purple heading color */
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+        .form-group label {
+            font-weight: bold;
+            color: #6b5296; /* Purple label color */
+        }
+
+    .form-control {
+        width: 100%;
+        padding: 0.375rem 0.75rem;
+        font-size: 1rem;
+        line-height: 1.5;
+        color: #495057;
+        background-color: #ffffff;
+        background-clip: padding-box;
+        border: 1px solid #ced4da;
+        border-radius: 0.25rem;
+        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    }
+
+        .form-control[disabled] {
+            background-color: #f8f9fa;
+        }
+
+    .btn-primary {
+        color: #fff;
+        background-color: #1b6ec2; /* Blue button color */
+        border-color: #1861ac;
+    }
+</style>
+
+<h3>View Tutors</h3>
+
+<FormComponent tutor="tutor" Disabled="true" />
+
+@code {
+    [Parameter] public int id { get; set; }
+    Tutor? tutor = new Tutor();
+
+    protected async override Task OnParametersSetAsync()
+    {
+        tutor = await _client.GetFromJsonAsync<Tutor>($"{Endpoints.TutorsEndpoint}/{id}");
+    }
+}

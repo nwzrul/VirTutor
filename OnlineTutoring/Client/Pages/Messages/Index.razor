@@ -1,0 +1,145 @@
+﻿<!-- Index.razor -->
+@page "/messages"
+@inject HttpClient _client
+@inject IJSRuntime js
+@attribute [Authorize]
+@inject HttpInterceptorService _interceptor
+@implements IDisposable
+
+<style>
+    /* Add the suggested CSS styles here */
+    body {
+        background-color: #f0e8f9; /* Light purple background */
+        color: #000000; /* Dark text color */
+        font-family: 'Arial', sans-serif; /* Use a suitable font */
+    }
+
+    h3 {
+        color: #6b5296; /* Purple heading color */
+    }
+
+    .btn {
+        background-color: #8752ad; /* Purple button color */
+        color: #ffffff; /* White text for buttons */
+    }
+
+    img {
+        border-radius: 8px; /* Rounded corners for images */
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+
+    th, td {
+        padding: 12px;
+        border: 1px solid #ddd;
+    }
+
+    th {
+        background-color: #8752ad; /* Purple header background */
+        color: #000000;
+    }
+
+    tr:nth-child(even) {
+        background-color: #f9f9f9; /* Zebra striping */
+    }
+
+    a {
+        color: #8752ad; /* Purple link color */
+    }
+
+        a:hover {
+            text-decoration: underline; /* Underline on hover */
+        }
+
+    td a {
+        color: #1e7fd0; /* Blue color for qualification links */
+    }
+</style>
+
+<h3 class="card-title">Chat Messages</h3>
+<a href="/messages/create" class="btn btn-secondary">
+    <span class="oi oi-plus"></span>
+    Create New ChatBox
+</a>
+
+<br />
+<br />
+
+@if (Messages == null)
+{
+    <div class="alert alert-info">Loading messages...</div>
+}
+else
+{
+    <table class="table table-responsive" id="messagesTable">
+        <thead>
+            <tr>
+                <th>Name of Sender</th>
+                <th>Content of Message</th>
+                <th>Recipient of Message</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var message in Messages)
+            {
+                <tr>
+                    <td>@message.Student?.StudentName</td>
+                    <td>@message.MessageContent</td>
+                    <td>@message.Tutor?.TutorName</td>
+                    <td>
+                        <a href="/messages/view/@message.Id" class="btn btn-primary">
+                            <span class="oi oi-book"></span> View
+                        </a>
+                        <a href="/messages/edit/@message.Id" class="btn btn-warning">
+                            <span class="oi oi-pencil"></span> Edit
+                        </a>
+                        <button class="btn btn-danger" @onclick="@(()=>Delete(message.Id))">
+                            <span class="oi oi-delete"></span> Delete
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<br />
+
+@code {
+    private List<Message>? Messages;
+
+    protected async override Task OnInitializedAsync()
+    {
+        _interceptor.MonitorEvent();
+        Messages = await _client.GetFromJsonAsync<List<Message>>($"{Endpoints.MessagesEndpoint}");
+    }
+
+    async Task Delete(int messageId)
+    {
+        if (Messages != null)
+        {
+            var message = Messages.First(q => q.Id == messageId);
+            var confirm = await js.InvokeAsync<bool>("confirm", $"Do you want to delete message {message.Id}?");
+            if (confirm)
+            {
+                await _client.DeleteAsync($"{Endpoints.MessagesEndpoint}/{messageId}");
+                await OnInitializedAsync();
+            }
+        }
+    }
+
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+        await js.InvokeVoidAsync("AddDataTable", "#messagesTable");
+    }
+
+    public void Dispose()
+    {
+        js.InvokeVoidAsync("DataTablesDispose", "#messagesTable");
+    }
+}

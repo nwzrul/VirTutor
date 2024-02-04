@@ -22,5 +22,7 @@ namespace OnlineTutoring.Server.IRepository
         IGenericRepository<Payment> Payments { get; }
         IGenericRepository<Qualification> Qualifications { get; }
         IGenericRepository<Review> Reviews { get; }
+        IGenericRepository<Gender> Genders { get; }
+
     }
 }

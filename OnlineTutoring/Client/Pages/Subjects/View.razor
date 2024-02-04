@@ -1,0 +1,71 @@
+﻿@page "/subjects/view/{id:int}"
+@inject HttpClient _client
+@inject NavigationManager _navManager
+
+<style>
+    /* Add the suggested CSS styles here */
+    body {
+        background-color: #f0e8f9; /* Light purple background */
+        color: #000000; /* Dark text color */
+        font-family: 'Arial', sans-serif; /* Use a suitable font */
+    }
+
+    h3 {
+        color: #6b5296; /* Purple heading color */
+    }
+
+    .btn {
+        background-color: #8752ad; /* Purple button color */
+        color: #ffffff; /* White text for buttons */
+    }
+
+    img {
+        border-radius: 8px; /* Rounded corners for images */
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+
+    th, td {
+        padding: 12px;
+        border: 1px solid #ddd;
+    }
+
+    th {
+        background-color: #8752ad; /* Purple header background */
+        color: #000000;
+    }
+
+    tr:nth-child(even) {
+        background-color: #f9f9f9; /* Zebra striping */
+    }
+
+    a {
+        color: #8752ad; /* Purple link color */
+    }
+
+        a:hover {
+            text-decoration: underline; /* Underline on hover */
+        }
+
+    td a {
+        color: #1e7fd0; /* Blue color for qualification links */
+    }
+</style>
+
+<h3>View Subjects</h3>
+
+<FormComponent subject="subject" Disabled="true" />
+
+@code {
+    [Parameter] public int id { get; set; }
+    Subject? subject = new Subject();
+    protected async override Task OnParametersSetAsync()
+    {
+        subject = await
+        _client.GetFromJsonAsync<Subject>($"{Endpoints.SubjectsEndpoint}/{id}");
+    }
+}

@@ -1,0 +1,98 @@
+﻿@page "/subjects/register/"
+@inject HttpClient _client
+@inject NavigationManager _navManager
+
+<style>
+    /* Add the suggested CSS styles here */
+    body {
+        background-color: #f0e8f9; /* Light purple background */
+        color: #000000; /* Dark text color */
+        font-family: 'Arial', sans-serif; /* Use a suitable font */
+    }
+
+    h3 {
+        color: #6b5296; /* Purple heading color */
+    }
+
+    .btn {
+        background-color: #8752ad; /* Purple button color */
+        color: #ffffff; /* White text for buttons */
+    }
+
+    img {
+        border-radius: 8px; /* Rounded corners for images */
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+
+    th, td {
+        padding: 12px;
+        border: 1px solid #ddd;
+    }
+
+    th {
+        background-color: #8752ad; /* Purple header background */
+        color: #000000;
+    }
+
+    tr:nth-child(even) {
+        background-color: #f9f9f9; /* Zebra striping */
+    }
+
+    a {
+        color: #8752ad; /* Purple link color */
+    }
+
+        a:hover {
+            text-decoration: underline; /* Underline on hover */
+        }
+
+    td a {
+        color: #1e7fd0; /* Blue color for qualification links */
+    }
+</style>
+
+<h3 class="card-title"> Create a Subject</h3>
+
+<FormComponent ButtonText="Create Subject" subject="subject" OnValidSubmit="@CreateSubject" />
+
+<EditForm Model="@subject" OnValidSubmit="CreateSubject">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group">
+        <label>Subject Name:</label>
+        <div>
+            <InputText @bind-Value="@subject.SubjectType" class="form-control" />
+            <ValidationMessage For="@(() => subject.SubjectType)" />
+        </div>
+    </div>
+    <div class="form-group">
+        <label>Subject Level: </label>
+        <div>
+            <InputText @bind-Value="subject.SubjectLevel" class="form-control" />
+            <ValidationMessage For="@(()=> subject.SubjectLevel)" />
+        </div>
+    </div>
+    <button type="submit" class="btn btn-success btn-block">
+        Create Subject
+    </button>
+
+</EditForm>
+
+
+@code {
+
+    Subject subject = new Subject();
+
+    private async Task CreateSubject()
+    {
+        await _client.PostAsJsonAsync(Endpoints.SubjectsEndpoint, subject);
+        _navManager.NavigateTo("/subjects/");
+    }
+
+}

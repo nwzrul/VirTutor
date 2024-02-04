@@ -10,6 +10,7 @@ namespace OnlineTutoring.Shared.Domain
     {
         public string? SubjectType { get; set; }
         public string? SubjectLevel { get; set; }
+        public string? SubjectImg { get; set;}
         //public int PosterId { get; set; }
         //public virtual Poster? Poster { get; set; }
     }

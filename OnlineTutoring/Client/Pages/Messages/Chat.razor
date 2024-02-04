@@ -1,0 +1,77 @@
+﻿@page "/messages/chat/{userId:int}"
+@inject HttpClient _client
+@inject IJSRuntime js
+@attribute [Authorize]
+@inject HttpInterceptorService _interceptor
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+<h3>Chat</h3>
+
+<div>
+    @foreach (var message in Messages)
+    {
+        <p>@message.MessageContent</p>
+    }
+</div>
+
+<div>
+    <input @bind="newMessage" />
+    <button @onclick="SendMessage">Send</button>
+</div>
+
+@code {
+    [Parameter] public int UserId { get; set; }
+
+    private List<Message> Messages;
+    private string newMessage;
+
+    private async Task LoadMessages()
+    {
+        // Load chat messages from the service based on the user's role
+        if (await UserIsTutorAsync())
+        {
+            // Assuming your API endpoint for tutor messages is /api/tutor/{userId}/messages
+            Messages = await _client.GetFromJsonAsync<List<Message>>($"/api/tutors/{UserId}/messages");
+        }
+        else
+        {
+            // Assuming your API endpoint for student messages is /api/student/{userId}/messages
+            Messages = await _client.GetFromJsonAsync<List<Message>>($"/api/students/{UserId}/messages");
+        }
+    }
+
+    private async Task SendMessage()
+    {
+        var userId = (await AuthenticationStateProvider.GetAuthenticationStateAsync()).User.Identity.Name;
+        var senderId = int.Parse(userId);
+        var receiverId = UserId;
+
+        var newMessage = new Message
+            {
+                SenderId = senderId,
+                ReceiverId = receiverId,
+                MessageContent = this.newMessage,
+                Timestamp = DateTime.Now
+            };
+
+        // Save the message to the server
+        await _client.PostAsJsonAsync("/api/messages", newMessage);
+
+        // Reload the chat messages
+        await LoadMessages();
+    }
+
+    private async Task<bool> UserIsTutorAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        // Assuming you have a claim or role indicating the user is a tutor
+        return user.IsInRole("Tutor");
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadMessages();
+    }
+}

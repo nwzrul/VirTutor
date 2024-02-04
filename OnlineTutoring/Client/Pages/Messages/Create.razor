@@ -1,0 +1,132 @@
+﻿<!-- create.razor -->
+@page "/messages/create/"
+@inject HttpClient _client
+@inject NavigationManager _navManager
+
+<style>
+    /* Add the suggested CSS styles here */
+    body {
+        background-color: #f0e8f9; /* Light purple background */
+        color: #000000; /* Dark text color */
+        font-family: 'Arial', sans-serif; /* Use a suitable font */
+    }
+
+    h3 {
+        color: #6b5296; /* Purple heading color */
+    }
+
+    .btn {
+        background-color: #8752ad; /* Purple button color */
+        color: #ffffff; /* White text for buttons */
+    }
+
+    img {
+        border-radius: 8px; /* Rounded corners for images */
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+
+    th, td {
+        padding: 12px;
+        border: 1px solid #ddd;
+    }
+
+    th {
+        background-color: #8752ad; /* Purple header background */
+        color: #000000;
+    }
+
+    tr:nth-child(even) {
+        background-color: #f9f9f9; /* Zebra striping */
+    }
+
+    a {
+        color: #8752ad; /* Purple link color */
+    }
+
+        a:hover {
+            text-decoration: underline; /* Underline on hover */
+        }
+
+    td a {
+        color: #1e7fd0; /* Blue color for qualification links */
+    }
+</style>
+
+<h3 class="card-title">Create New Chat Message</h3>
+
+<EditForm Model="@message" OnValidSubmit="CreateMessage">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <div class="form-group">
+        <label>Message Sender:</label>
+        <div>
+            <InputSelect @bind-Value="message.StudentID" class="form-control">
+                <option value="">-- Select Your Student --</option>
+                @if (Students != null)
+                {
+                    foreach (var student in Students)
+                    {
+                        <option value="@student.Id">@student.StudentName</option>
+                    }
+                }
+            </InputSelect>
+            <ValidationMessage For="@(()=> message.StudentID)" />
+        </div>
+    </div>
+    <div class="form-group">
+        <label>Message:</label>
+        <div>
+            <InputText @bind-Value="@message.MessageContent" class="form-control" />
+            <ValidationMessage For="@(() => message.MessageContent)" />
+        </div>
+    </div>
+    <div class="form-group">
+        <label>Recipient of Tutor:</label>
+        <div>
+            <InputSelect @bind-Value="message.TutorID" class="form-control">
+                <option value="">-- Select Your Tutor --</option>
+                @if (Tutors != null)
+                {
+                    foreach (var tutor in Tutors)
+                    {
+                        <option value="@tutor.Id">@tutor.TutorName</option>
+                    }
+                }
+            </InputSelect>
+            <ValidationMessage For="@(()=> message.TutorID)" />
+        </div>
+    </div>
+    <div class="form-group">
+        <button type="submit" class="btn btn-success btn-block">
+            Create Message
+        </button>
+    </div>
+</EditForm>
+
+@code {
+    Message message = new Message();
+
+    private IList<Tutor>? Tutors;
+    private IList<Student>? Students;
+    private IList<Message>? Messages;
+
+    protected async override Task OnInitializedAsync()
+    {
+        Tutors = await _client.GetFromJsonAsync<List<Tutor>>($"{Endpoints.TutorsEndpoint}");
+        Messages = await _client.GetFromJsonAsync<List<Message>>($"{Endpoints.MessagesEndpoint}");
+        Students = await _client.GetFromJsonAsync<List<Student>>($"{Endpoints.StudentsEndpoint}");
+    }
+
+    private async Task CreateMessage()
+    {
+        
+        await _client.PostAsJsonAsync(Endpoints.MessagesEndpoint, message);
+        _navManager.NavigateTo("/messages/");
+        
+    }
+}

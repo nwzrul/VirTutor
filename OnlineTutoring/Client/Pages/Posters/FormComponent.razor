@@ -1,0 +1,67 @@
+﻿<EditForm Model="@poster" OnValidSubmit="@OnValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <fieldset disabled="@Disabled">
+    
+
+     <div class="form-group">
+        <label>Post Picture: </label>
+        <div>
+            <InputText @bind-Value="poster.Image" class="form-control" placeholder="Only Enter Image URL . . ." />
+            <ValidationMessage For="@(() => poster.Image)" />
+        </div>
+    </div>
+    <div class="form-group">
+        <label>Poster Name:</label>
+        <div>
+            <InputText @bind-Value="@poster.Description" class="form-control" />
+            <ValidationMessage For="@(() => poster.Description)" />
+        </div>
+    </div>
+
+     <div class="form-group">
+        <label>Course Price:</label>
+        <div>
+            <InputNumber @bind-Value="@poster.CoursePrice" class="form-control" Format="C2" />
+            <ValidationMessage For="@(() => poster.CoursePrice)" />
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>Level: </label>
+        <div>
+            <InputSelect @bind-Value="@poster.SubjectId" class="form-control">
+                <option value="">--Select Listing</option>
+
+                @if (Subjects != null)
+                {
+                    foreach (var subject in Subjects)
+                    {
+                        <option value="@subject.Id">@subject.SubjectLevel</option>
+                    }
+                }
+            </InputSelect>
+        </div>
+    </div>
+
+    </fieldset>
+
+    @if (!Disabled)
+    {
+        <button type="submit" class="btn btn-success btn-block">
+            @ButtonText
+        </button>
+    }
+    <BackToList Target="posters" />
+</EditForm>
+
+@code {
+
+    [Parameter] public bool Disabled { get; set; } = false;
+    [Parameter] public Poster? poster { get; set; }
+    [Parameter] public string ButtonText { get; set; } = "Save";
+    [Parameter] public EventCallback OnValidSubmit { get; set; }
+    [Parameter] public IList<Subject>? Subjects { get; set; }
+
+
+}

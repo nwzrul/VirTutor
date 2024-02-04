@@ -34,7 +34,7 @@ namespace OnlineTutoring.Server.Controllers
             //{
             //return NotFound();
             //}
-            var rewiews = await _unitOfWork.Reviews.GetAll();
+            var reviews = await _unitOfWork.Reviews.GetAll();
             return Ok(reviews);
             //return await _context.Makes.ToListAsync();
         }
